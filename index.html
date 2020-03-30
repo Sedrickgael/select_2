@@ -1,0 +1,320 @@
+
+<!-- dans un projet django avec une base -->
+{% extends 'bases/base.html' %}
+{% load static %}
+
+
+{% block pagescss %}
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/select2@4.0.3/dist/css/select2.min.css">
+{% endblock pagescss %}
+
+{% block content %}
+
+<!-- Start content -->
+<div class="content">
+    <div class="container-fluid">
+        <div class="page-title-box">
+            <div class="row align-items-center">
+
+                <div class="col-sm-6">
+                    <h4 class="page-title">Développeur</h4>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Veltrix</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Développeur</a></li>
+                        <li class="breadcrumb-item active">Add new dev</li>
+                    </ol>
+
+                </div>
+
+            </div>
+        </div>
+        <!-- end row -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="mt-0 header-title">Ajouter un nouveau développeur</h4>
+                        <p class="text-muted mb-4">Merci de renseigner correctement les champs</p>
+
+                        <div id="myDev">
+                            <form action="" method="POST" v-on:keyup.enter="sendDev" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div v-if="isSuccess" class="alert alert-success" role="alert">
+                                    ${ message }
+                                </div>
+                                <div v-if="error" class="alert alert-danger" role="alert">
+                                    ${ message }
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-sm-6">
+
+                                        <h4 class=" text-center mt-0 header-title">Informations professionnelles</h4>
+                                        <br>
+                                        <div class="form-group">
+                                            <label for="username">Username Github</label>
+                                            <input v-model="username" id="username" name="nom" type="text"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="nom">Nom</label>
+                                            <input v-model="nom" id="nom" name="nom" type="text" class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="prenoms">Prénoms</label>
+                                            <input v-model="prenoms" id="prenoms" name="prenoms" type="text"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input v-model="email" id="email" name="email" type="email"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="contact">Contact</label>
+                                            <input v-model="contact" id="contact" name="contact" type="text"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="adresse">Adresse</label>
+                                            <input v-model="adresse" id="adresse" name="contact" type="text"
+                                                class="form-control">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <h4 class="mt-0 header-title text-center">Informations professionnelles</h4><br>
+                                        <div class="form-group">
+                                            <div class="form-group">
+                                                <label for="productdesc">Spécialité</label>
+                                                <!-- <select v-model="specialite" class="form-control ">
+                                                            <option>Select</option>
+                                                            {% for pro in all_specialite %}
+                                                                <option value="{{pro.id}}">{{pro.nom}}</option>
+                                                            {% endfor %}
+                                                        </select> -->
+                                                <!-- <v-select :options="options"></v-select> -->
+                                                <!-- <script type="text/x-template" id="demo-template">
+                                                            <div>
+                                                              <p>Selected: {{ selected }}</p>
+                                                              <select2 :options="options" v-model="selected">
+                                                                <option disabled value="0">Select one</option>
+                                                              </select2>
+                                                            </div>
+                                                          </script> -->
+                                                <!-- affichage du select 2  -->
+                                                <select2 :options=options v-model="specialite"></select2>
+                                            </div>
+                                            <!-- <div class="form-group">
+                                                        <label class="control-label">Compétences</label>
+                                                        <select class="select2 form-control select2-multiple" multiple="multiple" data-placeholder="Choose ...">
+                                                            <option value="AK">Alaska</option>
+                                                            <option value="HI">Hawaii</option>
+                                                            <option value="CA">California</option>
+                                                            <option value="NV">Nevada</option>
+                                                            <option value="OR">Oregon</option>
+                                                            <option value="WA">Washington</option>
+                                                        </select>
+                                                    </div> -->
+
+                                            <div class="form-group">
+                                                <label for="github">Github</label>
+                                                <input v-model="github" id="github" name="email" type="email"
+                                                    class="form-control">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="linkedin">Linkedin</label>
+                                                <input v-model="linkedine" id="linkedin" name="contact" type="text"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="bio">Biographie</label>
+                                                <textarea v-model="biographie" class="form-control" id="bio"
+                                                    rows="5"></textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="image">Image</label>
+                                                <input id="file" v-on:change="handleFileUploaded" ref="file" type="file"
+                                                    class="filestyle" data-buttonname="btn-secondary">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center" v-if="isregister"><img
+                                        src=" {% static 'assets/images/30.gif' %}" alt=""></div>
+                                <button v-if="!isregister" type="submit" v-on:click.prevent="sendDev"
+                                    class="btn btn-success mr-1 waves-effect waves-light">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+    <!-- container-fluid -->
+
+</div>
+<!-- content -->
+{% endblock content %}
+
+{% block pagesjs %}
+<script type="text/x-template" id="select2-template">
+    <select>
+      <slot></slot>
+    </select>
+  </script>
+<!-- App js -->
+<script src="https://unpkg.com/jquery@3.1.1/dist/jquery.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/select2@4.0.3/dist/js/select2.js"></script>
+<script>
+
+    // Création de component select2
+    Vue.component('select2', {
+        props: ['options', 'value'],
+        template: '#select2-template',
+        mounted: function () {
+            var vm = this
+            $(this.$el)
+                // init select2
+                .select2({ data: this.options })
+                .val(this.value)
+                .trigger('change')
+                // emit event on change.
+                .on('change', function () {
+                    vm.$emit('input', this.value)
+                })
+        },
+        watch: {
+            value: function (value) {
+                // update value
+                $(this.$el)
+                    .val(value)
+                    .trigger('change')
+            },
+            options: function (options) {
+                // update options
+                $(this.$el).empty().select2({ data: options })
+            }
+        },
+        destroyed: function () {
+            $(this.$el).off().select2('destroy')
+        }
+    });
+    var vm = new Vue({
+        el: '#myDev',
+
+        data: {
+            username: '',
+            nom: '',
+            prenoms: '',
+            email: '',
+            contact: '',
+            adresse: '',
+            specialite: '',
+            github: '',
+            linkedine: '',
+            biographie: '',
+            isregister: false,
+            loader: false,
+            isSuccess: false,
+            error: false,
+            base_url: window.location.protocol + "//" + window.location.host + "/",
+            file: '',
+            options: [
+                {% for pro in all_specialite %}     
+                        {% if forloop.counter == all_specialite.count %}
+    { id: { { pro.id } }, text: '{{pro.nom}}' }
+    {% else %}
+    { id: { { pro.id } }, text: '{{pro.nom}}' },
+    {% endif %}
+
+    {% endfor %}
+                ],
+            },
+    delimiters: ["${", "}"],
+        mounted() {
+    },
+    methods: {
+        sendDev: function () {
+            if (!this.isregister) {
+                this.error = false
+                this.isSuccess = false
+                this.isregister = true
+                if (this.username == "" || this.nom == "" || this.prenoms == "" || this.date_fin == "" || this.email == "" || this.contact == "" || this.adresse == "" || this.specialite == "" || this.github == "" || this.linkedine == "" || this.biographie == "") {
+                    this.message = "Veuillez remplir correctement les champs";
+                    this.error = true
+                    this.isSuccess = false
+                    this.isregister = false;
+                } else {
+                    let formData = new FormData();
+                    formData.append('file', this.file);
+                    formData.append('biographie', this.biographie);
+                    formData.append('nom', this.nom);
+                    formData.append('username', this.username);
+                    formData.append('email', this.email);
+                    formData.append('contact', this.contact);
+                    formData.append('adresse', this.adresse);
+                    formData.append('specialite', this.specialite);
+                    formData.append('github', this.github);
+                    formData.append('linkedine', this.linkedine);
+                    formData.append('prenoms', this.prenoms);
+                    axios.defaults.xsrfCookieName = 'csrftoken'
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+                    axios.post(this.base_url + 'post_dev',
+                        formData,
+                        {
+                            headers: {
+
+                                'Content-Type': 'multipart/form-data',
+                            }
+                        }).then(response => {
+                            console.log(response)
+                            this.isregister = false;
+                            if (response.data.success) {
+                                this.isSuccess = true
+                                this.error = false
+                                this.message = response.data.message
+                                this.success = response.data.success
+                                console.log("azertyu")
+                                window.location.replace(this.base_url + "directory");
+                            } else {
+                                this.error = true
+                                this.message = response.data.message
+                                this.success = response.data.success
+                                this.isSuccess = false
+                            }
+                            console.log("success variable" + this.isSuccess)
+                            // console.log("success variable"+this.error)
+                        })
+                        .catch((err) => {
+                            this.isregister = false;
+                            console.log(err);
+                        })
+
+                }
+            }
+        },
+        handleFileUploaded(){
+            this.file = this.$refs.file.files[0];
+            console.log(this.file)
+        },
+    },
+        });
+</script>
+{% endblock pagesjs %}
